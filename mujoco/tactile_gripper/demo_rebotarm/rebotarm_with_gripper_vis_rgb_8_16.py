@@ -23,7 +23,7 @@ XML_PATH = "/home/hjx/hjx_file/STF/Force_Gripper_Arm/mujoco/assets_robot_xml/reb
 # 你的这版代码是 8 x 16 触觉阵列
 GRID_H = 8
 GRID_W = 16
-FORCE_MAX = 1.0
+FORCE_MAX = 0.05  # 1
 
 # 注意：
 # 你原代码 idx = x + y * 8
