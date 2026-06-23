@@ -1,0 +1,61 @@
+<mujoco>
+    <include file="scene.xml"/>
+<!--    <include file="reBot-DevArm_gripper.xml"/>-->
+    <include file="reBot-DevArm_gripper_tactile.xml"/>
+
+    <equality>
+        <weld body1="mocap_left" body2="link6" solref="0.01 1" solimp=".25 .25 0.001" />
+    </equality>
+
+    <worldbody>
+
+        <body mocap="true" name="mocap_left" pos="-0.23 0.60 0.19" euler="0 0 0">
+            <site pos="0 0 0" size="0.003 0.003 0.03" type="box" name="mocap_left_site1" rgba="1 0 0 1"/>
+            <site pos="0 0 0" size="0.003 0.03 0.003" type="box" name="mocap_left_site2" rgba="1 0 0 1"/>
+            <site pos="0 0 0" size="0.03 0.003 0.003" type="box" name="mocap_left_site3" rgba="1 0 0 1"/>
+        </body>
+
+
+        <body name="peg" pos="0.2 0.6 0.15">
+            <joint name="red_peg_joint" type="free" frictionloss="0.01" />
+            <inertial pos="0 0 0" mass="0.15" diaginertia="0.002 0.002 0.002" />
+            <geom condim="4" solimp="2 1 0.01" solref="0.01 1" friction="1 0.005 0.0001" pos="0 0 0" size="0.06 0.01 0.01" type="box" name="red_peg" rgba="1 0 0 1" />
+        </body>
+
+        <body name="socket" pos="-0.2 0.5 0.05" euler="0 1.57 0">
+            <joint name="blue_socket_joint" type="free" frictionloss="0.01" />
+            <inertial pos="0 0 0" mass="0.025" diaginertia="0.002 0.002 0.002" />
+<!--            <geom condim="4" solimp="2 1 0.01" solref="0.01 1" friction="1 0.005 0.0001" pos="0 0 0" size="0.06 0.01 0.01" type="box" name="red_peg_ref" rgba="1 0 0 1" />-->
+            <geom condim="4" solimp="2 1 0.01" solref="0.01 1" friction="1 0.05 0.001" pos="0 0 -0.02" size="0.06 0.018 0.002" type="box" name="socket-1" rgba="0 0 1 1" />
+            <geom condim="4" solimp="2 1 0.01" solref="0.01 1" friction="1 0.05 0.001" pos="0 0 0.02" size="0.06 0.018 0.002" type="box" name="socket-2" rgba="0 0 1 1" />
+            <geom condim="4" solimp="2 1 0.01" solref="0.01 1" friction="1 0.05 0.001" pos="0 0.02 0" size="0.06 0.002 0.018" type="box" name="socket-3" rgba="0 0 1 1" />
+            <geom condim="4" solimp="2 1 0.01" solref="0.01 1" friction="1 0.05 0.001" pos="0 -0.02 0" size="0.06 0.002 0.018" type="box" name="socket-4" rgba="0 0 1 1" />
+            <geom condim="4" solimp="2 1 0.01" solref="0.01 1" friction="1 0.005 0.0001" pos="0 0 0" size="0.04 0.01 0.01" type="box" name="pin" rgba="1 0 0 1" />
+        </body>
+
+        <body name="hathpace" pos="0.2 0.6 0.1">
+            <inertial pos="0 0 0" mass="0.1" diaginertia="0.002 0.002 0.002" />
+            <geom condim="4" solimp="2 1 0.01" solref="0.01 1" friction="1 0.005 0.0001" pos="0 0 0" size="0.06 0.06 0.01" type="box" material="marble" />
+            <body name="support_cylinder" pos="0 0.0 -0.055">
+                <geom condim="4" material="marble" type="cylinder" size="0.025 0.045"/>
+            </body>
+        </body>
+
+    </worldbody>
+
+    <actuator>
+        <position class="finger" name="gripper" joint="left_finger" user="1" forcelimited="true" forcerange="-100 100"/>
+    </actuator>
+
+<!--    <sensor>-->
+<!--        <framequat name='orientation_left' objtype='site' objname='imu_left' />-->
+<!--        <gyro name='ang_vel_left' site='imu_left' />-->
+<!--        <accelerometer name="accel_left" site="imu_left" />-->
+<!--    </sensor>-->
+
+    <keyframe>
+        <key qpos="0 0 0 0 0 0 0 0
+                   0.2 0.5 0.05 1 0 0 0  -0.2 0.5 0.05 1 0 0 0"/>
+    </keyframe>
+
+</mujoco>

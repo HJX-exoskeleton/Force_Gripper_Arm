@@ -1,0 +1,89 @@
+<mujocoinclude>
+<!--    <option timestep='0.0025' iterations="50" tolerance="1e-10" solver="Newton" jacobian="dense" cone="elliptic"/>-->
+    <option integrator="implicitfast"/>
+
+    <extension>
+        <plugin plugin="mujoco.sensor.touch_grid"/>
+    </extension>
+
+    <statistic center="0 0 0.1" extent="0.6"/>
+
+    <asset>
+        <mesh file="tabletop.stl" name="tabletop" scale="0.001 0.001 0.001"/>
+
+        <!-- floor -->
+        <texture builtin="checker" height="100" name="texplane" rgb1="0.6 0.6 0.6" rgb2="0.8 0.8 0.8" type="2d" width="100"/>
+        <material name="MatPlane" reflectance="0.5" shininess="1" specular="1" texrepeat="60 60" texture="texplane" />
+
+        <!-- wood -->
+        <texture type="2d" file="wood.png"/>
+        <material name="wood" texture="wood"/>
+
+        <!-- light_wood -->
+        <texture type="2d" file="light_wood.png"/>
+        <material name="light_wood" texture="light_wood"/>
+
+        <!-- marble -->
+        <texture type="2d" file="marble.png"/>
+        <material name="marble" texture="marble"/>
+
+        <!-- metal -->
+        <texture type="2d" file="metal.png"/>
+        <material name="metal" texture="metal"/>
+
+        <!-- carpet-black -->
+        <texture type="2d" file="carpet-black.png"/>
+        <material name="carpet-black" texture="carpet-black"/>
+
+    </asset>
+
+    <visual>
+        <map fogstart="1.5" fogend="5" force="0.1" znear="0.1"/>
+        <quality shadowsize="4096" offsamples="4"/>
+        <headlight ambient="0.4 0.4 0.4"/>
+    </visual>
+
+    <!-- add tactile -->
+    <default>
+      <default class="pad">
+        <geom mass="0" type="box" friction="0.9" solimp="0.98 0.99 0.001" solref="0.004 1" priority="1"/>
+      </default>
+    </default>
+
+    <worldbody>
+        <light castshadow="false" directional='true' diffuse='.3 .3 .3' specular='0.3 0.3 0.3' pos='-1 -1 1'
+               dir='1 1 -1'/>
+        <light directional='true' diffuse='.3 .3 .3' specular='0.3 0.3 0.3' pos='1 -1 1' dir='-1 1 -1'/>
+        <light castshadow="false" directional='true' diffuse='.3 .3 .3' specular='0.3 0.3 0.3' pos='0 1 1'
+               dir='0 -1 -1'/>
+
+        <!-- floor -->
+        <body name="floor" pos="0 0 -0.45">
+            <geom friction="1.0 .1 .1" material="MatPlane" name="floor" pos="0 0 0.0"  size="30 30 0.125" type="plane" condim="3" conaffinity="1"/>
+        </body>
+
+        <!-- table -->
+        <body name="table" pos="0 .6 0.0">
+<!--            <geom group="1" mesh="tabletop" pos="0 0 0" type="mesh" conaffinity="1" contype="1" name="table" rgba="0.2 0.2 0.2 1" />-->
+            <geom condim="4" material="wood" type="mesh" mesh="tabletop" conaffinity="1" contype="1"/>
+            <body name="table_support" pos="0 0.0 -0.23">
+                <geom condim="4" material="wood" type="cylinder" size="0.15 0.22"/>
+            </body>
+<!--            <body name="table_bulge" pos="0.0 -0.25 0.01">-->
+<!--                <geom condim="4" material="wood" type="box" size="0.1 0.015 0.02"/>-->
+<!--            </body>-->
+        </body>
+
+        <body name="midair" pos="0 .6 0.2">
+            <site pos="0 0 0" size="0.01" type="sphere" name="midair" rgba="1 0 0 0"/>
+        </body>
+
+        <camera name="left_pillar" pos="-0.5 0.2 0.6" fovy="78" mode="targetbody" target="table"/>
+        <camera name="right_pillar" pos="0.5 0.2 0.6" fovy="78" mode="targetbody" target="table"/>
+        <camera name="top" pos="0 0.6 1.1" fovy="78" mode="targetbody" target="table"/>
+        <camera name="angle" pos="0 0 0.9" fovy="78" mode="targetbody" target="table"/>
+        <camera name="front_close" pos="0 -0.32 0.6" fovy="78" mode="targetbody" target="vx300s_left/camera_focus"/>
+
+    </worldbody>
+
+</mujocoinclude>

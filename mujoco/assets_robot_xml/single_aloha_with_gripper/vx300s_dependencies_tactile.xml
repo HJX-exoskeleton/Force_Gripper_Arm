@@ -1,0 +1,179 @@
+<mujocoinclude>
+
+    <size memory="100M"/>
+    <compiler angle="radian" inertiafromgeom="auto" inertiagrouprange="4 5"/>
+    <compiler meshdir="assets" autolimits="true"/>
+    <option impratio="0.1"/>
+
+    <!--add gripper-->
+    <default>
+        <default class="objects">
+          <mesh scale="0.001 0.001 0.001"/>
+        </default>
+        <default class="2f85">
+          <mesh scale="0.001 0.001 0.001"/>
+          <general biastype="affine"/>
+
+          <joint axis="1 0 0"/>
+          <default class="driver">
+            <joint range="0 0.8" armature="0.005" damping="0.1" solimplimit="0.95 0.99 0.001" solreflimit="0.005 1"/>
+          </default>
+          <default class="follower">
+            <joint range="-0.872664 0.872664" pos="0 -0.018 0.0065" solimplimit="0.95 0.99 0.001" solreflimit="0.005 1" armature="0.001"/>
+          </default>
+          <default class="spring_link">
+            <joint range="-0.29670597283 0.8" stiffness="0.05" springref="2.62" damping="0.000125" armature="0.001"/>
+          </default>
+          <default class="coupler">
+            <joint range="-1.57 0" solimplimit="0.95 0.99 0.001" solreflimit="0.005 1" armature="0.001"/>
+          </default>
+
+          <default class="visual">
+            <geom type="mesh" contype="0" conaffinity="0" group="2"/>
+          </default>
+
+          <default class="collision">
+            <geom type="mesh" group="3"/>
+          </default>
+
+          <default class="pad">
+            <geom mass="0" type="box" friction="0.9" solimp="0.98 0.99 0.001" solref="0.004 1" priority="1"/>
+          </default>
+
+        </default>
+    </default>
+
+    <!-- vx300s arm -->
+    <asset>
+        <mesh name="vx300s_1_base" file="vx300s_1_base.stl" scale="0.001 0.001 0.001" />
+        <mesh name="vx300s_2_shoulder" file="vx300s_2_shoulder.stl" scale="0.001 0.001 0.001" />
+        <mesh name="vx300s_3_upper_arm" file="vx300s_3_upper_arm.stl" scale="0.001 0.001 0.001" />
+        <mesh name="vx300s_4_upper_forearm" file="vx300s_4_upper_forearm.stl" scale="0.001 0.001 0.001" />
+        <mesh name="vx300s_5_lower_forearm" file="vx300s_5_lower_forearm.stl" scale="0.001 0.001 0.001" />
+        <mesh name="vx300s_6_wrist" file="vx300s_6_wrist.stl" scale="0.001 0.001 0.001" />
+        <mesh name="vx300s_7_gripper" file="vx300s_7_gripper.stl" scale="0.001 0.001 0.001" />
+        <mesh name="vx300s_8_gripper_prop" file="vx300s_8_gripper_prop.stl" scale="0.001 0.001 0.001" />
+        <mesh name="vx300s_9_gripper_bar" file="vx300s_9_gripper_bar.stl" scale="0.001 0.001 0.001" />
+        <mesh name="vx300s_10_gripper_finger_left" file="vx300s_10_custom_finger_left.stl" scale="0.001 0.001 0.001" />
+        <mesh name="vx300s_10_gripper_finger_right" file="vx300s_10_custom_finger_right.stl" scale="0.001 0.001 0.001" />
+    </asset>
+
+    <!-- add gripper -->
+    <asset>
+        <material name="metal" rgba="0.58 0.58 0.58 1"/>
+        <material name="silicone" rgba="0.1882 0.1882 0.1882 1"/>
+        <material name="gray" rgba="0.4627 0.4627 0.4627 1"/>
+        <material name="black" rgba="0.149 0.149 0.149 1"/>
+
+        <mesh class="2f85" file="base_mount.stl"/>
+        <mesh class="2f85" file="base.stl"/>
+        <mesh class="2f85" file="driver.stl"/>
+        <mesh class="2f85" file="coupler.stl"/>
+        <mesh class="2f85" file="follower.stl"/>
+        <mesh class="2f85" file="pad.stl"/>
+        <mesh class="2f85" file="silicone_pad.stl"/>
+        <mesh class="2f85" file="spring_link.stl"/>
+
+        <mesh class="objects" name="holder1" file="holder1.stl"/>
+        <mesh class="objects" name="holder2" file="holder2.stl"/>
+        <mesh class="objects" name="holder3" file="holder3.stl"/>
+        <mesh class="objects" name="triangle" file="triangle.stl"/>
+        <mesh class="objects" file="triangle_wall1.stl"/>
+        <mesh class="objects" file="triangle_wall2.stl"/>
+        <mesh class="objects" file="triangle_wall3.stl"/>
+        <mesh class="objects" file="triangle_wall4.stl"/>
+        <mesh class="objects" name="square" file="square.stl"/>
+        <mesh class="objects" file="square_wall1.stl"/>
+        <mesh class="objects" file="square_wall2.stl"/>
+        <mesh class="objects" file="square_wall3.stl"/>
+        <mesh class="objects" file="square_wall4.stl"/>
+        <mesh class="objects" name="rectangle" file="rectangle.stl"/>
+        <mesh class="objects" file="rectangle_wall1.stl"/>
+        <mesh class="objects" file="rectangle_wall2.stl"/>
+        <mesh class="objects" file="rectangle_wall3.stl"/>
+        <mesh class="objects" file="rectangle_wall4.stl"/>
+        <mesh class="objects" name="horizontal" file="horizontal.stl"/>
+        <mesh class="objects" file="horizontal_wall1.stl"/>
+        <mesh class="objects" file="horizontal_wall2.stl"/>
+        <mesh class="objects" file="horizontal_wall3.stl"/>
+        <mesh class="objects" file="horizontal_wall4.stl"/>
+        <mesh class="objects" name="vertical" file="vertical.stl"/>
+        <mesh class="objects" file="vertical_wall1.stl"/>
+        <mesh class="objects" file="vertical_wall2.stl"/>
+        <mesh class="objects" file="vertical_wall3.stl"/>
+        <mesh class="objects" file="vertical_wall4.stl"/>
+        <mesh class="objects" name="trapezoidal" file="trapezoidal.stl"/>
+        <mesh class="objects" file="trapezoidal_wall1.stl"/>
+        <mesh class="objects" file="trapezoidal_wall2.stl"/>
+        <mesh class="objects" file="trapezoidal_wall3.stl"/>
+        <mesh class="objects" file="trapezoidal_wall4.stl"/>
+        <mesh class="objects" name="rhombus" file="rhombus.stl"/>
+        <mesh class="objects" file="rhombus_wall1.stl"/>
+        <mesh class="objects" file="rhombus_wall2.stl"/>
+        <mesh class="objects" file="rhombus_wall3.stl"/>
+        <mesh class="objects" file="rhombus_wall4.stl"/>
+    </asset>
+
+    <!-- others -->
+    <asset>
+        <mesh file="tabletop.stl" name="tabletop" scale="0.001 0.001 0.001"/>
+
+        <!-- floor -->
+        <texture builtin="checker" height="100" name="texplane" rgb1="0.6 0.6 0.6" rgb2="0.8 0.8 0.8" type="2d" width="100"/>
+        <material name="MatPlane" reflectance="0.5" shininess="1" specular="1" texrepeat="60 60" texture="texplane" />
+
+        <!-- wood -->
+        <texture type="2d" file="assets/wood.png"/>
+        <material name="wood" texture="wood"/>
+
+        <!-- light_wood -->
+        <texture type="2d" file="assets/light_wood.png"/>
+        <material name="light_wood" texture="light_wood"/>
+
+        <!-- marble -->
+        <texture type="2d" file="assets/marble.png"/>
+        <material name="marble" texture="marble"/>
+
+        <!-- metal -->
+<!--        <texture type="2d" file="assets/metal.png"/>-->
+<!--        <material name="metal" texture="metal"/>-->
+
+        <!-- carpet-black -->
+        <texture type="2d" file="assets/carpet-black.png"/>
+        <material name="carpet-black" texture="carpet-black"/>
+
+    </asset>
+
+    <!-- add gripper -->
+    <contact>
+        <exclude body1="base" body2="left_driver"/>
+        <exclude body1="base" body2="right_driver"/>
+        <exclude body1="base" body2="left_spring_link"/>
+        <exclude body1="base" body2="right_spring_link"/>
+        <exclude body1="right_coupler" body2="right_follower"/>
+        <exclude body1="left_coupler" body2="left_follower"/>
+    </contact>
+
+    <!--
+    This adds stability to the model by having a tendon that distributes the forces between both
+    joints, such that the equality constraint doesn't have to do that much work in order to equalize
+    both joints. Since both joints share the same sign, we split the force between both equally by
+    setting coef=0.5
+    -->
+    <tendon>
+        <fixed name="split">
+          <joint joint="right_driver_joint" coef="0.5"/>
+          <joint joint="left_driver_joint" coef="0.5"/>
+        </fixed>
+    </tendon>
+
+    <equality>
+        <connect anchor="0 0 0" body1="right_follower" body2="right_coupler" solimp="0.95 0.99 0.001" solref="0.005 1"/>
+        <connect anchor="0 0 0" body1="left_follower" body2="left_coupler" solimp="0.95 0.99 0.001" solref="0.005 1"/>
+        <joint joint1="right_driver_joint" joint2="left_driver_joint" polycoef="0 1 0 0 0" solimp="0.95 0.99 0.001"
+          solref="0.005 1"/>
+    </equality>
+
+    <statistic center="0 0 0.05" extent="0.3"/>
+
+</mujocoinclude>

@@ -1,0 +1,16 @@
+<mujoco>
+
+<!--    <body name="touch_pad_left" pos="0.015 0.0052 0.035" euler="1.57 0 3.14" gravcomp="1">-->
+    <body name="touch_pad_left" pos="0.08 -0.010 -0.005" euler="1.57 0 0" gravcomp="1">
+        <geom class="pad" name="touch_base_left" type="box" pos="0.015 0.015 0.0116" size="0.008 0.016 0.0002" rgba="0.15 0.15 0.15 1" />
+        <replicate count="16" offset="0.0 0.002 0.0">
+            <replicate count="8" offset="0.002 0.0 0.0">
+                <body pos="0.008 0 0.012" gravcomp="1">
+                    <geom class="pad" type="box" size="0.001 0.001 0.0002" rgba="0.5 0.3 0.2 0.3" mass="0"/>
+                    <site name="touch_point_left" pos="0 0 0" size="0.0002 0.0002 0.0002" rgba="0.2 0.2 0.2 0"/>
+                </body>
+            </replicate>
+        </replicate>
+    </body>
+
+</mujoco>

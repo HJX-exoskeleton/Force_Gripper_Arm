@@ -1,0 +1,78 @@
+<mujoco model="rebotarm_sim_cupboard">
+
+  <include file="scene.xml"/>
+<!--  <include file="reBot-DevArm_gripper.xml"/>-->
+  <include file="reBot-DevArm_gripper_tactile.xml"/>
+
+  <worldbody>
+
+    <body name="box" pos="0.05 0.6 0.25">
+        <joint name="green_box_joint" type="free" frictionloss="0.01"/>
+        <inertial pos="0 0 0" mass="0.05" diaginertia="0.002 0.002 0.002"/>
+        <geom condim="4" solimp="2 1 0.01" solref="0.01 1" friction="1 0.5 0.01" pos="0 0 0" size="0.02 0.02 0.02" type="box" name="green_box" rgba="0 1 0 1" />
+    </body>
+
+    <body name="target_box" pos="0.08 0.6 0.05">
+        <joint name="target_box_joint" type="free" frictionloss="0.01" />
+        <inertial pos="0 0 0" mass="1" diaginertia="0.2 0.2 0.2" />
+        <geom condim="4" solimp="2 1 0.01" solref="0.01 1" friction="1 0.5 0.01" pos="0 0 0" size="0.07 0.168 0.001" type="box" name="target_box" rgba="0.5 0.2 0.5 1" />
+    </body>
+
+    <!-- Cupboard -->
+    <body name="cupboard" pos="-0.0 0.6 0.0" quat="1 0 0 -1" >
+        <!--  collision  -->
+        <geom type="box" pos="0 0.09 0.195" size="0.19 0.09 0.005" conaffinity="1" condim="3" contype="0" group="1" rgba="0.68 0.68 0.68 1"/>
+        <geom type="box" pos="0 0.09 0.10" size="0.19 0.09 0.005" conaffinity="1" condim="3" contype="0" group="1" rgba="0.68 0.68 0.68 1"/>
+        <geom type="box" pos="0 0.09 0.01" size="0.19 0.09 0.005" conaffinity="1" condim="3" contype="0" group="1" rgba="0.68 0.68 0.68 1"/>
+        <geom type="box" pos="0.185 0.09 0.10" size="0.005 0.09 0.1" conaffinity="1" condim="3" contype="0" group="1" rgba="0.68 0.68 0.68 1"/>
+        <geom type="box" pos="-0.185 0.09 0.10" size="0.005 0.09 0.1" conaffinity="1" condim="3" contype="0" group="1" rgba="0.68 0.68 0.68 1"/>
+        <geom type="box" pos="0 0.175 0.10" size="0.19 0.005 0.1" conaffinity="1" condim="3" contype="0" group="1" rgba="0.68 0.68 0.68 1"/>
+
+<!--            <site name="drawer_goal" pos="0.0 -0.2 0.05" size="0.01 0.01 0.01" rgba="1 0 0 1" type="sphere" />-->
+        <body name="drawer" pos="0.0 0.0 -0.007">
+            <joint name="drawer_joint" type="slide" armature="0.001" damping="1" frictionloss="10" axis='0 -1 0' limited="true" range="0.0 0.14"/>
+            <!--  collision  -->
+            <geom type="box" pos="0 0.08 0.035" size="0.18 0.08 0.005" conaffinity="1" condim="3" contype="1" group="1" friction="0.001 0.09 0.9" rgba="0.68 0.68 0.68 1" />
+            <geom type="box" pos="0 -0.005 0.055" size="0.185 0.005 0.03" conaffinity="1" condim="3" contype="1" group="1" friction="0.001 0.09 0.9" rgba="0.68 0.68 0.68 1" />
+            <geom type="box" pos="0 0.15 0.055" size="0.175 0.005 0.03" conaffinity="1" condim="3" contype="1" group="1" friction="0.001 0.09 0.9" rgba="0.68 0.68 0.68 1" />
+            <geom type="box" pos="0.175 0.07 0.055" size="0.004 0.08 0.03" conaffinity="1" condim="3" contype="1" group="1" friction="0.001 0.09 0.9" rgba="0.68 0.68 0.68 1" />
+            <geom type="box" pos="-0.175 0.07 0.055" size="0.004 0.08 0.03" conaffinity="1" condim="3" contype="1" group="1" friction="0.001 0.09 0.9" rgba="0.68 0.68 0.68 1" />
+
+            <geom name="handle_box" type="box" pos="0 -0.05 0.055" size="0.01 0.05 0.008" conaffinity="1" condim="4" contype="1" group="1" friction="0.001 0.09 0.9" rgba="0.2 0.2 0.5 1"/>
+
+            <geom type="box" pos="0 -0.09 0.055" size="0.023 0.01 0.008" conaffinity="1" condim="4" contype="1" group="1" friction="0.001 0.09 0.9" rgba="0.2 0.2 0.5 1"/>
+
+<!--                <site name="drawer" pos="0.0 -0.06 0.055" size="0.01 0.01 0.01" rgba="0 0 1 1" type="sphere" />-->
+
+            <inertial pos="0.0 0.0 0.0" quat="1 0 0 0" mass="0.5" diaginertia="0.001 0.001 0.001" />
+
+        </body>
+    </body>
+
+  </worldbody>
+
+  <actuator>
+    <position ctrllimited="true" ctrlrange="-1.87 1.87" joint="joint1" kp="1800"  user="1" forcelimited="true" forcerange="-150 150"/>
+    <position ctrllimited="true" ctrlrange="-3.14 0" joint="joint2" kp="1800"  user="1" forcelimited="true" forcerange="-150 150"/>
+    <position ctrllimited="true" ctrlrange="-3.14 0" joint="joint3" kp="1800"  user="1" forcelimited="true" forcerange="-150 150"/>
+    <position ctrllimited="true" ctrlrange="-1.87 1.57" joint="joint4" kp="1500"  user="1" forcelimited="true" forcerange="-100 100"/>
+    <position ctrllimited="true" ctrlrange="-1.57 1.57" joint="joint5" kp="1500"  user="1" forcelimited="true" forcerange="-100 100"/>
+    <position ctrllimited="true" ctrlrange="-3.14 3.14" joint="joint6" kp="1500" user="1" forcelimited="true" forcerange="-100 100"/>
+
+    <position class="finger" name="gripper" joint="left_finger" user="1" forcelimited="true" forcerange="-100 100"/>
+  </actuator>
+
+<!--  <sensor>-->
+<!--    <framequat name='orientation_left' objtype='site' objname='imu_left' />-->
+<!--    <gyro name='ang_vel_left' site='imu_left' />-->
+<!--    <accelerometer name="accel_left" site="imu_left" />-->
+<!--  </sensor>-->
+
+  <keyframe>
+<!--      <key qpos="0 0 0 0 0 0 0 0-->
+<!--                 0.05 0.6 0.25 1 0 0 0-->
+<!--                 0.08 0.6 0.05 1 0 0 0-->
+<!--                 -0.007"/>-->
+  </keyframe>
+
+</mujoco>

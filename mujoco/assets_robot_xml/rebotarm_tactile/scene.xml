@@ -1,0 +1,49 @@
+<mujocoinclude>
+
+    <asset>
+        <mesh file="tabletop.stl" name="tabletop" scale="0.001 0.001 0.001"/>
+        <!-- floor -->
+        <texture builtin="checker" height="100" name="texplane" rgb1="0.6 0.6 0.6" rgb2="0.8 0.8 0.8" type="2d" width="100"/>
+        <material name="MatPlane" reflectance="0.5" shininess="1" specular="1" texrepeat="60 60" texture="texplane"/>
+        <!-- 设置天空盒纹理 -->
+        <texture type="skybox" file="desert.png" gridsize="3 4" gridlayout=".U..LFRB.D.." />
+    </asset>
+
+    <visual>
+        <map fogstart="1.5" fogend="5" force="0.1" znear="0.1"/>
+        <quality shadowsize="4096" offsamples="4"/>
+        <headlight ambient="0.4 0.4 0.4"/>
+    </visual>
+
+    <worldbody>
+        <light castshadow="false" directional='true' diffuse='.3 .3 .3' specular='0.3 0.3 0.3' pos='-1 -1 1' dir='1 1 -1'/>
+        <light directional='true' diffuse='.3 .3 .3' specular='0.3 0.3 0.3' pos='1 -1 1' dir='-1 1 -1'/>
+        <light castshadow="false" directional='true' diffuse='.3 .3 .3' specular='0.3 0.3 0.3' pos='0 1 1' dir='0 -1 -1'/>
+
+        <!-- floor -->
+        <body name="floor" pos="0 0 -0.45">
+            <geom friction="1.0 .1 .1" material="MatPlane" name="floor" pos="0 0 0.0"  size="30 30 0.125" type="plane" condim="3" conaffinity="1"/>
+        </body>
+
+        <!-- table -->
+        <body name="table" pos="0 .6 0.0">
+            <geom condim="4" material="wood" type="mesh" mesh="tabletop" conaffinity="1" contype="1"/>
+            <body name="table_support" pos="0 0.0 -0.23">
+                <geom condim="4" material="wood" type="cylinder" size="0.15 0.22"/>
+            </body>
+        </body>
+
+        <body name="midair" pos="0 .6 0.2">
+            <site pos="0 0 0" size="0.01" type="sphere" name="midair" rgba="1 0 0 0"/>
+        </body>
+
+        <camera name="left_pillar" pos="-0.5 0.2 0.6" fovy="78" mode="targetbody" target="table"/>
+        <camera name="right_pillar" pos="0.5 0.2 0.6" fovy="78" mode="targetbody" target="table"/>
+        <camera name="top" pos="0 0.6 1.1" fovy="78" mode="targetbody" target="table"/>
+        <camera name="angle" pos="0 0 0.9" fovy="78" mode="targetbody" target="table"/>
+        <camera name="front_close" pos="0 -0.32 0.6" fovy="78" mode="targetbody" target="camera_focus"/>
+
+    </worldbody>
+
+</mujocoinclude>
+
