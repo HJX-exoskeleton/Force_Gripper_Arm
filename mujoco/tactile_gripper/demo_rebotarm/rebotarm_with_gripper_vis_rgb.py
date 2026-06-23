@@ -13,6 +13,7 @@ from loop_rate_limiters import RateLimiter
 
 
 logging.getLogger().setLevel(logging.ERROR)
+logging.getLogger("loop_rate_limiters").setLevel(logging.ERROR)
 
 
 # ============================================================
@@ -23,26 +24,27 @@ XML_PATH = "/home/hjx/hjx_file/STF/Force_Gripper_Arm/mujoco/assets_robot_xml/reb
 
 GRID_H = 16
 GRID_W = 16
-FORCE_MAX = 1.0
+
+FORCE_MAX = 0.05  # 1
 
 # 仿真频率：先不要直接 200 Hz，先用 100 Hz 测试稳定性
 SIM_HZ = 100.0
 
 # OpenCV 热力图显示频率
-VIS_HZ = 20.0
+VIS_HZ = 50.0
 
 # MuJoCo viewer 同步频率
-VIEWER_HZ = 20.0
+VIEWER_HZ = 30.0
 
 # top camera 渲染频率
-CAMERA_HZ = 10.0
+CAMERA_HZ = 5.0
 
 # 是否启用 MuJoCo viewer
 ENABLE_MUJOCO_VIEWER = True
 
-# 是否启用 top camera 离屏渲染
-# 如果仍然卡，优先把它改成 False
-ENABLE_TOP_CAMERA = True
+# 是否启用 top camera 离屏渲染。
+# 离屏相机渲染通常是本脚本最重的步骤。触觉低延迟优先时建议保持 False。
+ENABLE_TOP_CAMERA = False
 
 # top camera 分辨率
 # 640x480 会更清晰，但 readPixels 更慢
@@ -53,8 +55,11 @@ CAMERA_NAME = "top"
 # OpenCV 热力图窗口显示大小
 HEATMAP_DISPLAY_SIZE = 480
 
-# 队列最多保留几帧。小一点可以避免可视化延迟堆积
-QUEUE_MAXSIZE = 2
+# 队列只保留最新帧，避免可视化延迟堆积
+QUEUE_MAXSIZE = 1
+
+# 每隔多少仿真步打印一次耗时统计。0 表示关闭。
+PERF_LOG_INTERVAL = 0
 
 
 # ============================================================
@@ -78,6 +83,20 @@ def put_latest(q: mp.Queue, item):
 
     except queue.Full:
         pass
+
+
+def get_latest(q: mp.Queue, timeout=0.05):
+    """
+    读取最新帧。
+    如果队列里已经积压了旧帧，直接丢弃旧帧，只返回最后一帧。
+    """
+    packet = q.get(timeout=timeout)
+
+    while True:
+        try:
+            packet = q.get_nowait()
+        except queue.Empty:
+            return packet
 
 
 # ============================================================
@@ -362,7 +381,7 @@ def visualization_process(frame_queue: mp.Queue, stop_event: mp.Event):
 
     while not stop_event.is_set():
         try:
-            packet = frame_queue.get(timeout=0.05)
+            packet = get_latest(frame_queue, timeout=0.02)
         except queue.Empty:
             key = cv2.waitKey(1)
             if key == 27:
@@ -479,7 +498,6 @@ def simulation_process(frame_queue: mp.Queue, stop_event: mp.Event):
     camera_interval = max(1, int(round(SIM_HZ / CAMERA_HZ)))
 
     step_count = 0
-    last_top_view = None
 
     print("[SIM] simulation loop started")
     print(f"[SIM] SIM_HZ={SIM_HZ}, VIS every {vis_interval} steps")
@@ -488,6 +506,7 @@ def simulation_process(frame_queue: mp.Queue, stop_event: mp.Event):
 
     try:
         while not stop_event.is_set():
+            loop_start = time.perf_counter()
 
             if viewer is not None and not viewer.is_running():
                 stop_event.set()
@@ -506,12 +525,16 @@ def simulation_process(frame_queue: mp.Queue, stop_event: mp.Event):
             #     data.ctrl[gripper_control] = real_gripper_value
             # =====================================================
 
+            step_start = time.perf_counter()
             mujoco.mj_step(model, data)
+            step_ms = (time.perf_counter() - step_start) * 1000.0
 
             # =====================================================
             # 低频读取触觉并发送给可视化进程
             # =====================================================
+            tactile_ms = 0.0
             if step_count % vis_interval == 0:
+                tactile_start = time.perf_counter()
                 touch_right = read_tactile(
                     right_reader,
                     data,
@@ -532,35 +555,64 @@ def simulation_process(frame_queue: mp.Queue, stop_event: mp.Event):
                     "time": float(data.time),
                 }
 
-                # top camera 低频渲染
-                if (
-                    ENABLE_TOP_CAMERA
-                    and offscreen is not None
-                    and step_count % camera_interval == 0
-                ):
-                    window, cam, scene, context, viewport = offscreen
-
-                    last_top_view = render_camera_view(
-                        model,
-                        data,
-                        window,
-                        cam,
-                        scene,
-                        context,
-                        viewport,
-                        width=CAMERA_WIDTH,
-                        height=CAMERA_HEIGHT
-                    )
-
-                    packet["top_view"] = last_top_view
-
                 put_latest(frame_queue, packet)
+                tactile_ms = (time.perf_counter() - tactile_start) * 1000.0
+
+            # =====================================================
+            # top camera 更低频渲染。单独发包，避免拖慢触觉帧显示。
+            # =====================================================
+            camera_ms = 0.0
+            if (
+                ENABLE_TOP_CAMERA
+                and offscreen is not None
+                and step_count % camera_interval == 0
+            ):
+                camera_start = time.perf_counter()
+                window, cam, scene, context, viewport = offscreen
+
+                top_view = render_camera_view(
+                    model,
+                    data,
+                    window,
+                    cam,
+                    scene,
+                    context,
+                    viewport,
+                    width=CAMERA_WIDTH,
+                    height=CAMERA_HEIGHT
+                )
+
+                put_latest(
+                    frame_queue,
+                    {
+                        "touch_right": None,
+                        "touch_left": None,
+                        "top_view": top_view,
+                        "step": step_count,
+                        "time": float(data.time),
+                    }
+                )
+                camera_ms = (time.perf_counter() - camera_start) * 1000.0
 
             # =====================================================
             # MuJoCo viewer 降频同步
             # =====================================================
+            viewer_ms = 0.0
             if viewer is not None and step_count % viewer_interval == 0:
+                viewer_start = time.perf_counter()
                 viewer.sync()
+                viewer_ms = (time.perf_counter() - viewer_start) * 1000.0
+
+            loop_ms = (time.perf_counter() - loop_start) * 1000.0
+            if PERF_LOG_INTERVAL and step_count % PERF_LOG_INTERVAL == 0:
+                print(
+                    "[PERF] "
+                    f"loop={loop_ms:.2f} ms, "
+                    f"mj_step={step_ms:.2f} ms, "
+                    f"tactile={tactile_ms:.2f} ms, "
+                    f"camera={camera_ms:.2f} ms, "
+                    f"viewer={viewer_ms:.2f} ms"
+                )
 
             sim_rate.sleep()
 
