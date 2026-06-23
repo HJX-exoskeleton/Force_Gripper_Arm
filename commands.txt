@@ -1,6 +1,8 @@
 
 cd /Force_Gripper_Arm/mujoco/tactile_gripper/demo_rebotarm
 
+conda activate force_gripper
+
 python rebotarm_with_gripper_vis_force.py
 
 
